@@ -56,7 +56,15 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">Visit Our Store</h3>
-                                    <p className="text-gray-600">123 Silver Market, Main Bazaar,<br /> Mumbai, Maharashtra 400001</p>
+                                    <p className="text-gray-600">Shree Data Shah jewellers Pratap nagar<br /> Borkhera, Kota, Rajasthan 324002</p>
+                                    <a
+                                        href="https://maps.app.goo.gl/4NPfn9KgvJJ2gW4t7"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-website-accent text-sm font-bold hover:underline mt-2 inline-block"
+                                    >
+                                        View on Google Maps
+                                    </a>
                                 </div>
                             </div>
 
@@ -66,7 +74,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">Call Us</h3>
-                                    <p className="text-gray-600">{settings?.contact_phone || '+91 98765 43210'}</p>
+                                    <p className="text-gray-600">{settings?.contact_phone || '+91 83022 87914'}</p>
                                     <p className="text-sm text-gray-500">Mon-Sat, 10am - 8pm</p>
                                 </div>
                             </div>
@@ -77,7 +85,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">Email Us</h3>
-                                    <p className="text-gray-600">{settings?.contact_email || 'support@sdsjewellers.com'}</p>
+                                    <p className="text-gray-600">{settings?.contact_email || 'sdsjewellers1959@gmail.com'}</p>
                                 </div>
                             </div>
                         </div>

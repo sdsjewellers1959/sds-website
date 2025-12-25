@@ -6,16 +6,9 @@ const Locate = () => {
     const stores = [
         {
             id: 1,
-            name: "HEAD OFFICE - PUNE",
-            address: "123, Laxmi Road, Narayan Peth, Pune, Maharashtra 411030",
-            phone: "+91 98765 43210",
-            hours: "10:30 AM - 8:30 PM (Mon-Sat)"
-        },
-        {
-            id: 2,
-            name: "MUMBAI BRANCH",
-            address: "45, Zaveri Bazaar, Kalbadevi, Mumbai, Maharashtra 400002",
-            phone: "+91 98765 43211",
+            name: "HEAD OFFICE - KOTA",
+            address: "Shree Data Shah jewellers Pratap nagar, Borkhera, Kota, Rajasthan 324002",
+            phone: "+91 83022 87914",
             hours: "11:00 AM - 9:00 PM (Mon-Sat)"
         }
     ];
@@ -51,22 +44,33 @@ const Locate = () => {
                                             <p>{store.hours}</p>
                                         </div>
                                     </div>
-                                    <button className="mt-6 w-full border border-black text-black py-3 font-medium hover:bg-black hover:text-white transition duration-300 uppercase tracking-widest text-sm">
+                                    <a
+                                        href="https://maps.app.goo.gl/4NPfn9KgvJJ2gW4t7"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-6 block w-full border border-black text-black py-3 font-medium hover:bg-black hover:text-white transition duration-300 uppercase tracking-widest text-sm text-center"
+                                    >
                                         Get Directions
-                                    </button>
+                                    </a>
                                 </div>
                             </FadeIn>
                         ))}
                     </div>
 
-                    {/* Map Placeholder */}
+                    {/* Real Google Map Embed */}
                     <FadeIn delay={0.3}>
-                        <div className="h-[600px] bg-gray-100 rounded-sm relative overflow-hidden">
-                            <img
-                                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1600&auto=format&fit=crop"
-                                alt="Map Location"
-                                className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 transition duration-700"
-                            />
+                        <div className="h-[600px] bg-gray-100 rounded-sm relative overflow-hidden shadow-inner border border-gray-100">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.7892485232364!2d75.88557089999999!3d25.176593099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396f9ab19efd48b7%3A0xed5fa6c7082e1f6b!2z4KS24KWN4KSw4KWAIOCkpuCkvuCkpOCkviDgpLjgpL7gpIMg4KSc4KWN4KS14KWI4KSy4KSw4KWN4KS4!5e0!3m2!1sen!2sin!4v1766698490214!5m2!1sen!2sin"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen=""
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                title="SDS Jewellers Kota Map"
+                                className="grayscale hover:grayscale-0 transition-all duration-700"
+                            ></iframe>
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="bg-white/90 p-6 rounded-full shadow-xl animate-bounce">
                                     <MapPin size={40} className="text-website-accent" />

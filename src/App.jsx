@@ -11,6 +11,13 @@ import About from './pages/About';
 import Locate from './pages/Locate';
 import Login from './pages/Login';
 import ScrollToTop from './components/ScrollToTop';
+import FAQ from './pages/FAQ';
+import Care from './pages/Care';
+import Terms from './pages/Terms';
+
+// Simple placeholders for other footer links
+const Shipping = () => <div className="py-20 text-center text-2xl font-serif">Shipping & Returns Page Coming Soon</div>;
+const Careers = () => <div className="py-20 text-center text-2xl font-serif">Careers Page Coming Soon</div>;
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
@@ -42,6 +49,11 @@ function App() {
           <Route path="/locate" element={<Locate />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/care" element={<Care />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/shipping" element={<Shipping />} />
+          <Route path="/careers" element={<Careers />} />
         </Route>
       </Routes>
     </>

@@ -15,7 +15,7 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <span>Free Shipping on Orders above ₹5000</span>
                     <div className="flex items-center gap-4">
-                        <a href="tel:+919876543210" className="flex items-center gap-1 hover:text-website-accent transition"><Phone size={12} /> +91 98765 43210</a>
+                        <a href="tel:+918302287914" className="flex items-center gap-1 hover:text-website-accent transition"><Phone size={12} /> +91 83022 87914</a>
                         <LivePrice />
                     </div>
                 </div>
@@ -24,8 +24,9 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20 md:h-24 transition-all">
                     {/* Logo */}
-                    <Link to="/" className="flex-shrink-0 flex items-center group">
+                    <Link to="/" className="flex-shrink-0 flex flex-col items-center group leading-none">
                         <span className="font-serif text-3xl font-bold tracking-widest text-website-primary group-hover:text-website-accent transition duration-300">SDS</span>
+                        <span className="text-[10px] tracking-[0.3em] font-bold text-gray-400 group-hover:text-website-accent transition duration-300 -mt-1 uppercase">Jewellers</span>
                     </Link>
 
                     {/* Desktop Menu */}

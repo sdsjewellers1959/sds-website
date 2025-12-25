@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import CartDrawer from './CartDrawer';
+import WhatsAppWidget from './WhatsAppWidget';
 
 const Layout = () => {
     return (
@@ -12,6 +13,7 @@ const Layout = () => {
             <main className="flex-grow">
                 <Outlet />
             </main>
+            <WhatsAppWidget />
             <Footer />
         </div>
     );

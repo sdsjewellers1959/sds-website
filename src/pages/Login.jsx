@@ -10,7 +10,7 @@ const Login = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         // Hardcoded credentials as requested by user
-        if (email === 'kamalsoni@sdsjewellers.com' && password === 'warriorwhocodes') {
+        if (email === 'sdsjewellers1959@gmail.com' && password === 'warriorwhocodes') {
             localStorage.setItem('adminAuthenticated', 'true');
             navigate('/admin');
         } else {

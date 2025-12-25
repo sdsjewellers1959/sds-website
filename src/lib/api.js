@@ -110,8 +110,8 @@ export const apiClient = {
                 gst_percent: 3,
                 additional_tax_percent: 0,
                 other_charges_flat: 0,
-                contact_email: "contact@sdsjewellers.com",
-                contact_phone: "+91 98765 43210"
+                contact_email: "sdsjewellers1959@gmail.com",
+                contact_phone: "+91 83022 87914"
             };
         }
         return data;

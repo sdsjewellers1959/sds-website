@@ -8,7 +8,7 @@ const Hero = () => {
     {
       id: 1,
       image: "https://images.unsplash.com/photo-1626784215021-2e39ccf971cd?q=80&w=1600&auto=format&fit=crop",
-      subtitle: "ESTD 1995 • PUNE",
+      subtitle: "ESTD 1959 • KOTA",
       title: "Timeless Silver",
       titleAccent: "Elegance",
       text: "Discover our exquisite collection of handcrafted sterling silver jewelry, where tradition meets modern sophistication."

@@ -72,7 +72,10 @@ const Footer = () => {
                     <h1 className="text-[18vw] md:text-[12vw] leading-none font-serif font-bold text-gray-800 select-none mx-auto md:mx-0">SDS</h1>
                     <div className="text-center md:text-right w-full md:w-auto mt-8 md:mt-0">
                         <p className="text-gray-600 text-xs md:text-sm mb-2">&copy; {new Date().getFullYear()} SDS Jewellers.</p>
-                        <p className="text-gray-600 text-xs md:text-sm">Handcrafted in India with ❤️</p>
+                        <p className="text-gray-600 text-xs md:text-sm mb-2">Handcrafted in India with ❤️</p>
+                        <p className="text-gray-700 text-[10px] md:text-xs">
+                            Developed by <a href="https://warriorwhocodes.com/" target="_blank" rel="noopener noreferrer" className="hover:text-website-accent transition underline underline-offset-4">warriorwhocodes.com</a>
+                        </p>
                     </div>
                 </div>
             </div>

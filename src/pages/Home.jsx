@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ShieldCheck, Truck, RotateCcw, ArrowRight } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid';
 import Hero from '../components/Hero';
@@ -9,10 +9,17 @@ import OffersSection from '../components/OffersSection';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
+    const parallaxRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: parallaxRef,
+        offset: ["start end", "end start"]
+    });
+    const yTransform = useTransform(scrollYProgress, [0, 1], [-200, 200]);
+
     // Categories for "Magazine Style" Layout
     const categories = [
         { id: 'rings', name: 'Rings', image: 'https://images.unsplash.com/photo-1626784215021-2e39ccf971cd?q=80&w=800&auto=format&fit=crop' },
-        { id: 'necklaces', name: 'Necklaces', image: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?q=80&w=800&auto=format&fit=crop' },
+        { id: 'necklaces', name: 'Necklaces', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop' },
         { id: 'earrings', name: 'Earrings', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop' },
         { id: 'bracelets', name: 'Bracelets', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop' },
     ];
@@ -94,12 +101,21 @@ const Home = () => {
 
                 {/* LIFESTYLE BANNER */}
                 <FadeIn>
-                    <div className="relative h-[60vh] rounded-sm overflow-hidden my-24">
-                        <img
-                            src="https://images.unsplash.com/photo-1579618165604-98448eb589ee?q=80&w=1600&auto=format&fit=crop"
-                            alt="Lifestyle"
-                            className="absolute inset-0 w-full h-full object-cover"
-                        />
+                    <div ref={parallaxRef} className="relative h-[60vh] rounded-sm overflow-hidden my-24">
+                        <motion.div
+                            style={{
+                                y: yTransform,
+                                height: '160%',
+                                top: '-30%'
+                            }}
+                            className="absolute inset-0 w-full"
+                        >
+                            <img
+                                src="/assets/statement_banner.png"
+                                alt="Lifestyle"
+                                className="w-full h-full object-cover"
+                            />
+                        </motion.div>
                         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-6">
                             <h2 className="text-5xl md:text-8xl font-serif font-bold mb-6 stroke-text">STATEMENT PIECES</h2>
                             <p className="text-xl max-w-xl font-light mb-8">Jewelry that speaks before you do. Exploring the bold side of silver.</p>

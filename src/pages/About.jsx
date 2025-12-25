@@ -14,7 +14,7 @@ const About = () => {
                 <div className="relative z-10 text-center text-white p-4">
                     <FadeIn>
                         <h1 className="text-5xl md:text-7xl font-serif font-bold mb-4">Our Legacy</h1>
-                        <p className="text-xl font-light tracking-wide max-w-2xl mx-auto">Crafting silver perfection since 1995</p>
+                        <p className="text-xl font-light tracking-wide max-w-2xl mx-auto">Crafting silver perfection since 1959</p>
                     </FadeIn>
                 </div>
             </div>
@@ -25,22 +25,21 @@ const About = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <FadeIn>
                             <img
-                                src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=800&auto=format&fit=crop"
-                                alt="Jewelry Making"
-                                className="w-full h-[500px] object-cover rounded-sm shadow-xl"
+                                src="/assets/founder.jpg"
+                                alt="Founder Late Manak chand soni"
+                                className="w-full h-auto max-h-[800px] object-cover rounded-sm shadow-xl"
                             />
                         </FadeIn>
                         <FadeIn delay={0.2} className="space-y-6">
                             <h2 className="text-4xl font-serif font-bold text-gray-900">A Tradition of Trust</h2>
                             <p className="text-lg text-gray-600 leading-relaxed">
-                                Founded by the Shah family, SDS Jewellers began as a humble workshop in the heart of Pune. For over two decades, we have been dedicated to the art of silver craftsmanship, blending traditional Indian artistry with contemporary designs.
+                                Founded by the Soni family, SDS Jewellers began as a humble workshop in the heart of Kota, Rajasthan. For over six decades, we have been dedicated to the art of silver craftsmanship, blending traditional Rajasthani artistry with contemporary designs.
                             </p>
                             <p className="text-lg text-gray-600 leading-relaxed">
                                 We believe that jewelry is more than just an accessory; it is an heirloom, a memory, and a piece of art that stays with you forever. Our commitment to 100% purity and transparent pricing has made us a household name for silver jewelry.
                             </p>
                             <div className="pt-4">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Signature_sample.svg/1200px-Signature_sample.svg.png" alt="Signature" className="h-12 w-auto opacity-60" />
-                                <p className="text-sm font-bold mt-2 font-serif">Rajesh Shah, Founder</p>
+                                <p className="text-sm font-bold mt-2 font-serif">Late Manak chand soni, Founder</p>
                             </div>
                         </FadeIn>
                     </div>
