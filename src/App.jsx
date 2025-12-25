@@ -10,6 +10,7 @@ import AdminLayout from './pages/Admin';
 import About from './pages/About';
 import Locate from './pages/Locate';
 import Login from './pages/Login';
+import ScrollToTop from './components/ScrollToTop';
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
@@ -18,29 +19,33 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <Routes>
-      {/* Admin Routes - Isolated Layout */}
-      <Route path="/admin/login" element={<Login />} />
-      <Route
-        path="/admin/*"
-        element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      />
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Admin Routes - Isolated Layout */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Store Routes - Wrapped in Main Layout */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/category" element={<Category />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/locate" element={<Locate />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/checkout" element={<Checkout />} />
-      </Route>
-    </Routes>
+        {/* Store Routes - Wrapped in Main Layout */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/category" element={<Category />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/locate" element={<Locate />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/checkout" element={<Checkout />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
+
 export default App;
