@@ -7,6 +7,7 @@ import FadeIn from '../components/FadeIn';
 import Marquee from '../components/Marquee';
 import OffersSection from '../components/OffersSection';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Home = () => {
     const parallaxRef = useRef(null);
@@ -26,6 +27,10 @@ const Home = () => {
 
     return (
         <div>
+            <SEO
+                title="Premium Silver Jewelry"
+                description="Explore our exquisite collection of handcrafted 925 sterling silver jewelry. From timeless rings to heritage necklaces."
+            />
             <Hero />
 
             {/* KINETIC TYPOGRAPHY TEASER */}

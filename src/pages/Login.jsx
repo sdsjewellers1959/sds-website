@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -20,6 +20,10 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+            <SEO
+                title="Admin Login"
+                description="Secure access for SDS Jewellers administration."
+            />
             <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
                 <h2 className="text-2xl font-serif font-bold text-center mb-8">SDS Admin Login</h2>
                 {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}

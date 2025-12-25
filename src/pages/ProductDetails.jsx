@@ -7,6 +7,7 @@ import { apiClient } from '../lib/api';
 import { Minus, Plus, ShoppingCart, Star, Truck, ShieldCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useCart } from '../context/CartContext';
+import SEO from '../components/SEO';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -51,6 +52,10 @@ const ProductDetails = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <SEO
+                title={product.name}
+                description={product.description || `Exquisite handcrafted ${product.name} in 925 sterling silver.`}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
                 {/* Product Image */}
                 <div className="space-y-4">

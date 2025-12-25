@@ -1,9 +1,13 @@
-import React from 'react';
 import FadeIn from '../components/FadeIn';
+import SEO from '../components/SEO';
 
 const Care = () => {
     return (
         <div className="bg-white min-h-screen">
+            <SEO
+                title="Jewelry Care Guide"
+                description="Expert tips on how to clean and maintain your sterling silver jewelry. Keep your SDS treasures shining for a lifetime."
+            />
             <div className="bg-website-primary text-white py-16 text-center">
                 <FadeIn>
                     <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Jewelry Care</h1>

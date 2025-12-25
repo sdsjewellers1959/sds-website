@@ -1,6 +1,7 @@
 import React from 'react';
 import FadeIn from '../components/FadeIn';
 import { MapPin, Phone, Clock } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Locate = () => {
     const stores = [
@@ -15,6 +16,10 @@ const Locate = () => {
 
     return (
         <div className="bg-white min-h-screen">
+            <SEO
+                title="Store Locator | Find Us in Kota"
+                description="Visit Shree Data Shah Jewellers in Borkhera, Kota. Find directions, contact details, and store hours to experience our silver collections in person."
+            />
             <div className="bg-black text-white py-16 text-center">
                 <FadeIn>
                     <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Locate Us</h1>

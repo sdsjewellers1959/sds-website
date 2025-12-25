@@ -1,9 +1,14 @@
 import React from 'react';
 import FadeIn from '../components/FadeIn';
+import SEO from '../components/SEO';
 
 const About = () => {
     return (
         <div>
+            <SEO
+                title="Our Legacy"
+                description="Learn about the heritage of Shree Data Shah Jewellers. Crafting silver perfection in Kota since 1959 with a tradition of trust and artistry."
+            />
             {/* Hero Section */}
             <div className="relative h-[60vh] flex items-center justify-center bg-gray-900">
                 <img

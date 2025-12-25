@@ -1,5 +1,5 @@
-import React from 'react';
 import FadeIn from '../components/FadeIn';
+import SEO from '../components/SEO';
 
 const FAQ = () => {
     const faqs = [
@@ -27,6 +27,10 @@ const FAQ = () => {
 
     return (
         <div className="bg-white min-h-screen">
+            <SEO
+                title="Frequently Asked Questions"
+                description="Find answers to common questions about SDS Jewellers, our silver purity (925 hallmark), shipping policies, and customization options."
+            />
             <div className="bg-website-primary text-white py-16 text-center">
                 <FadeIn>
                     <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Frequently Asked Questions</h1>

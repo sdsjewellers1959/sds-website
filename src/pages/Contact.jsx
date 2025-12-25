@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { apiClient } from '../lib/api';
+import SEO from '../components/SEO';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -37,6 +38,10 @@ const Contact = () => {
 
     return (
         <div className="bg-gray-50 py-16">
+            <SEO
+                title="Contact Us"
+                description="Get in touch with Shree Data Shah Jewellers. Visit our store in Kota or reach out for inquiries about our handcrafted silver jewelry."
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h1 className="text-4xl font-serif font-bold text-gray-900 mb-4">Contact Us</h1>

@@ -1,9 +1,13 @@
-import React from 'react';
 import FadeIn from '../components/FadeIn';
+import SEO from '../components/SEO';
 
 const Terms = () => {
     return (
         <div className="bg-white min-h-screen">
+            <SEO
+                title="Terms & Privacy Policy"
+                description="Review our terms of service and privacy policy. Learn how SDS Jewellers protects your data and ensures transparent business practices."
+            />
             <div className="bg-website-primary text-white py-16 text-center">
                 <FadeIn>
                     <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Terms & Privacy</h1>

@@ -4,6 +4,7 @@ import { categories } from '../lib/mockData';
 import { apiClient } from '../lib/api';
 import { Filter } from 'lucide-react';
 import { cn } from '../lib/utils';
+import SEO from '../components/SEO';
 
 const Category = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
@@ -29,6 +30,10 @@ const Category = () => {
 
     return (
         <div className="pt-8">
+            <SEO
+                title={`${selectedCategory} Collection`}
+                description={`Browse our premium ${selectedCategory.toLowerCase()} collection. Handcrafted silver jewelry for every occasion.`}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-serif font-bold text-gray-900 mb-4">Our Collections</h1>
