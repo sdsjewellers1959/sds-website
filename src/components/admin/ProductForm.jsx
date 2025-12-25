@@ -18,13 +18,18 @@ const ProductForm = ({ product, onClose, onSave }) => {
         in_stock: true
     });
     const [settings, setSettings] = useState(null);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchSettingsAndData = async () => {
             try {
-                const settingsData = await apiClient.getSettings();
+                const [settingsData, categoriesData] = await Promise.all([
+                    apiClient.getSettings(),
+                    apiClient.getCategories()
+                ]);
                 setSettings(settingsData);
+                setCategories(categoriesData);
 
                 if (product) {
                     setFormData({
@@ -41,9 +46,11 @@ const ProductForm = ({ product, onClose, onSave }) => {
                         packaging_charge: product.packaging_charge || 0,
                         in_stock: product.in_stock
                     });
+                } else if (categoriesData.length > 0) {
+                    setFormData(prev => ({ ...prev, category: categoriesData[0].name }));
                 }
             } catch (err) {
-                console.error("Failed to load settings", err);
+                console.error("Failed to load settings or categories", err);
             }
         };
         fetchSettingsAndData();
@@ -52,21 +59,21 @@ const ProductForm = ({ product, onClose, onSave }) => {
     // Calculate Price logic
     useEffect(() => {
         if (settings && formData.weight > 0) {
-            const weight = parseFloat(formData.weight);
-            const purity = parseFloat(formData.purity_percent) / 100;
-            const silverPrice = parseFloat(settings.silver_price);
+            const weight = parseFloat(formData.weight) || 0;
+            const purity = (parseFloat(formData.purity_percent) || 0) / 100;
+            const silverPrice = parseFloat(settings.silver_price) || 0;
 
             const baseValue = weight * purity * silverPrice;
             const additionalCharges =
-                parseFloat(formData.gemstone_charge || 0) +
-                parseFloat(formData.hallmark_charge || 0) +
-                parseFloat(formData.polishing_charge || 0) +
-                parseFloat(formData.packaging_charge || 0);
+                (parseFloat(formData.gemstone_charge) || 0) +
+                (parseFloat(formData.hallmark_charge) || 0) +
+                (parseFloat(formData.polishing_charge) || 0) +
+                (parseFloat(formData.packaging_charge) || 0);
 
             const subtotal = baseValue + additionalCharges;
-            const labour = subtotal * (parseFloat(settings.labour_charge_percent) / 100);
+            const labour = subtotal * (parseFloat(settings.labour_charge_percent || 0) / 100);
             const taxableAmount = subtotal + labour;
-            const gst = taxableAmount * (parseFloat(settings.gst_percent) / 100);
+            const gst = taxableAmount * (parseFloat(settings.gst_percent || 0) / 100);
             const otherCharges = parseFloat(settings.other_charges_flat || 0);
 
             const total = taxableAmount + gst + otherCharges;
@@ -83,22 +90,33 @@ const ProductForm = ({ product, onClose, onSave }) => {
         settings
     ]);
 
-    const defaultCategories = ['Rings', 'Necklaces', 'Earrings', 'Bracelets', 'Sets', 'Anklets'];
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
+            // Clean data before sending to Supabase
+            const dataToSave = {
+                ...formData,
+                price: parseFloat(formData.price),
+                weight: parseFloat(formData.weight) || 0,
+                purity_percent: parseFloat(formData.purity_percent) || 0,
+                gemstone_charge: parseFloat(formData.gemstone_charge) || 0,
+                hallmark_charge: parseFloat(formData.hallmark_charge) || 0,
+                polishing_charge: parseFloat(formData.polishing_charge) || 0,
+                packaging_charge: parseFloat(formData.packaging_charge) || 0,
+            };
+
             if (product) {
-                await apiClient.updateProduct(product.id, formData);
+                await apiClient.updateProduct(product.id, dataToSave);
             } else {
-                await apiClient.createProduct(formData);
+                await apiClient.createProduct(dataToSave);
             }
             onSave();
             onClose();
         } catch (error) {
             console.error("Failed to save product", error);
-            alert("Failed to save product");
+            // More descriptive error
+            alert(`Failed to save product: ${error.message || 'Unknown error'}. Check console for details.`);
         } finally {
             setLoading(false);
         }
@@ -121,7 +139,7 @@ const ProductForm = ({ product, onClose, onSave }) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                             <select className="w-full border p-2 rounded-sm" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
-                                {defaultCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                             </select>
                         </div>
                         <div>

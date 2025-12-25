@@ -211,36 +211,60 @@ const SettingsPage = () => {
             )}
 
             {activeTab === 'offers' && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="font-bold mb-4">Add New Offer</h3>
-                        <form onSubmit={handleAddOffer} className="space-y-4">
-                            <input type="text" placeholder="Title (e.g. Wedding Season)" required className="w-full border p-2 rounded-sm focus:outline-none focus:border-website-primary" value={newOffer.title} onChange={e => setNewOffer({ ...newOffer, title: e.target.value })} />
-                            <input type="text" placeholder="Description" className="w-full border p-2 rounded-sm focus:outline-none focus:border-website-primary" value={newOffer.description} onChange={e => setNewOffer({ ...newOffer, description: e.target.value })} />
-                            <input type="text" placeholder="Discount (e.g. 20% OFF)" className="w-full border p-2 rounded-sm focus:outline-none focus:border-website-primary" value={newOffer.discount} onChange={e => setNewOffer({ ...newOffer, discount: e.target.value })} />
-                            <input type="text" placeholder="Code (e.g. WED20)" className="w-full border p-2 rounded-sm focus:outline-none focus:border-website-primary" value={newOffer.code} onChange={e => setNewOffer({ ...newOffer, code: e.target.value })} />
-                            <input type="text" placeholder="Image URL" className="w-full border p-2 rounded-sm focus:outline-none focus:border-website-primary" value={newOffer.image} onChange={e => setNewOffer({ ...newOffer, image: e.target.value })} />
-                            <button type="submit" className="bg-website-primary text-white px-4 py-2 rounded-sm text-sm hover:bg-black transition-colors">Add Offer</button>
-                        </form>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="font-bold mb-4">Active Offers</h3>
-                        <div className="space-y-4">
-                            {offers.map(offer => (
-                                <div key={offer.id} className="flex items-center justify-between border-b pb-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-gray-100 flex items-center justify-center font-bold text-xs text-center p-1 overflow-hidden">
-                                            {offer.discount || offer.title}
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[0, 1, 2].map((idx) => {
+                            const offer = offers[idx];
+                            return (
+                                <div key={idx} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                                    <h3 className="font-bold mb-4 flex justify-between items-center">
+                                        Slot {idx + 1}
+                                        {offer && <span className="text-xs font-normal text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Active</span>}
+                                    </h3>
+                                    <form onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        const formData = new FormData(e.target);
+                                        const data = Object.fromEntries(formData.entries());
+                                        try {
+                                            if (offer) {
+                                                await apiClient.updateOffer(offer.id, data);
+                                            } else {
+                                                await apiClient.createOffer(data);
+                                            }
+                                            loadData();
+                                            setMsg('Offer updated successfully!');
+                                        } catch (err) {
+                                            alert("Failed to save offer");
+                                        }
+                                    }} className="space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">Title</label>
+                                            <input name="title" defaultValue={offer?.title || ''} placeholder="e.g. Wedding Season" className="w-full border p-2 rounded-sm text-sm" required />
                                         </div>
                                         <div>
-                                            <p className="font-medium text-sm">{offer.title}</p>
-                                            <p className="text-xs text-gray-500">{offer.code}</p>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">Discount</label>
+                                            <input name="discount" defaultValue={offer?.discount || ''} placeholder="e.g. 20% OFF" className="w-full border p-2 rounded-sm text-sm" required />
                                         </div>
-                                    </div>
-                                    <button onClick={() => handleDeleteOffer(offer.id)} className="text-red-500 text-sm hover:underline">Delete</button>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">Description</label>
+                                            <textarea name="description" defaultValue={offer?.description || ''} placeholder="Short description..." className="w-full border p-2 rounded-sm text-sm" rows="2" required />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">Coupon Code</label>
+                                            <input name="code" defaultValue={offer?.code || ''} placeholder="e.g. WED20" className="w-full border p-2 rounded-sm text-sm" required />
+                                        </div>
+                                        <button type="submit" className="w-full bg-website-primary text-white py-2 rounded-sm text-sm hover:bg-black transition-colors">
+                                            {offer ? 'Update Slot' : 'Create Slot'}
+                                        </button>
+                                        {offer && (
+                                            <button type="button" onClick={() => handleDeleteOffer(offer.id)} className="w-full text-red-500 text-xs mt-2 hover:underline">
+                                                Reset to Default
+                                            </button>
+                                        )}
+                                    </form>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}

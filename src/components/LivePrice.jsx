@@ -7,29 +7,15 @@ const LivePrice = () => {
     const [trend, setTrend] = useState('neutral');
 
     useEffect(() => {
-        // Initial fetch
         const fetchPrice = async () => {
             try {
-                const data = await apiClient.getSilverPrice();
-                setPrice(data.price);
+                const settings = await apiClient.getSettings();
+                setPrice(parseFloat(settings.silver_price) || 0);
             } catch (error) {
                 console.error("Error fetching price", error);
             }
         };
         fetchPrice();
-
-        // Simulate live updates
-        const interval = setInterval(() => {
-            setPrice(prev => {
-                if (prev === 0) return prev;
-                const change = (Math.random() - 0.5) * 0.2;
-                const newPrice = prev + change;
-                setTrend(change > 0 ? 'up' : 'down');
-                return newPrice;
-            });
-        }, 5000);
-
-        return () => clearInterval(interval);
     }, []);
 
     return (

@@ -204,5 +204,17 @@ export const apiClient = {
 
         if (error) throw error;
         return { message: 'Offer deleted' };
+    },
+
+    updateOffer: async (id, offerData) => {
+        const { data, error } = await supabase
+            .from('offers')
+            .update(offerData)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
     }
 };
