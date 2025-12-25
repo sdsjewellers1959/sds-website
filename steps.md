@@ -1,0 +1,29 @@
+# SDS Jewellers Project Steps
+
+- [ ] Initialize Vite + React Project
+- [ ] Setup Tailwind CSS
+- [ ] Install Dependencies (react-router-dom, lucide-react, supabase-js, framer-motion)
+- [ ] Create Project Structure (components, pages, services, hooks)
+- [ ] Setup Supabase Client
+- [ ] Implement Live Silver Price Service (Mock/API)
+- [ ] **Frontend Development**
+    - [ ] Navbar & Footer
+    - [x] Hero Section
+    - [ ] Product Filter & Search
+    - [x] Product Grid Component
+    - [x] Home Page (Hero + Product List)
+    - [x] Category Page
+    - [x] Contact Page
+    - [x] Product Detail View (Modal/Page)
+    - [x] Cart Drawer/Page
+- [x] **Checkout Flow (Guest)**
+    - [x] User Details Form (Mobile, Email - No Login)
+    - [x] Integration with Razorpay (Mock)
+- [x] **Admin Panel**
+    - [x] Dashboard View
+    - [x] Product Management (Add/Edit)
+    - [x] Orders View
+- [x] **Final Polish**
+    - [x] Responsive Design Check
+    - [x] Animations (Framer Motion)
+    - [x] Verify Silver Price Updates
