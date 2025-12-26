@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, X, Truck, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, X, Truck, AlertTriangle, CheckCircle, XCircle, Menu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ProductForm from '../components/admin/ProductForm';
 
@@ -104,10 +104,10 @@ const SettingsPage = () => {
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Store Settings</h1>
 
-            <div className="flex gap-4 mb-8 border-b border-gray-200 pb-2">
-                <button onClick={() => setActiveTab('general')} className={`px-4 py-2 font-medium ${activeTab === 'general' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>General</button>
-                <button onClick={() => setActiveTab('categories')} className={`px-4 py-2 font-medium ${activeTab === 'categories' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>Categories</button>
-                <button onClick={() => setActiveTab('offers')} className={`px-4 py-2 font-medium ${activeTab === 'offers' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>Offers</button>
+            <div className="flex gap-4 mb-8 border-b border-gray-200 pb-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                <button onClick={() => setActiveTab('general')} className={`px-4 py-2 font-medium flex-shrink-0 ${activeTab === 'general' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>General</button>
+                <button onClick={() => setActiveTab('categories')} className={`px-4 py-2 font-medium flex-shrink-0 ${activeTab === 'categories' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>Categories</button>
+                <button onClick={() => setActiveTab('offers')} className={`px-4 py-2 font-medium flex-shrink-0 ${activeTab === 'offers' ? 'text-website-primary border-b-2 border-website-primary' : 'text-gray-500'}`}>Offers</button>
             </div>
 
             {msg && (
@@ -363,7 +363,40 @@ const Products = () => {
                 <h1 className="text-2xl font-bold">Products</h1>
                 <button onClick={handleAdd} className="bg-website-primary text-white px-4 py-2 rounded-sm text-sm">Add Product</button>
             </div>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            {/* Mobile Card View */}
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+                {products.map((product) => (
+                    <div key={product.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex gap-4">
+                        <img src={product.image} className="w-20 h-20 rounded-md object-cover flex-shrink-0 bg-gray-50" alt="" />
+                        <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-900 truncate">{product.name}</h3>
+                            <p className="text-xs text-gray-500 mb-1">{product.category}</p>
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <div className="font-bold text-website-primary">₹{product.price}</div>
+                                    <div className="mt-1">
+                                        {product.in_stock ?
+                                            <span className="text-[10px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded-full font-medium">In Stock</span> :
+                                            <span className="text-[10px] bg-red-50 text-red-700 px-1.5 py-0.5 rounded-full font-medium">Out of Stock</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleEdit(product)} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+                                        <Settings size={16} />
+                                    </button>
+                                    <button onClick={() => handleDelete(product.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full">
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -489,7 +522,67 @@ const Orders = () => {
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Orders</h1>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+            {/* Mobile Card View */}
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+                {orders.length > 0 ? orders.map((order) => {
+                    const pStatus = getPaymentStatus(order);
+                    const oStatus = getOrderStatus(order);
+                    return (
+                        <div key={order.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <div className="font-bold text-lg text-website-primary">#{order.id}</div>
+                                    <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</div>
+                                </div>
+                                <button
+                                    onClick={() => openModal(order)}
+                                    className="text-white bg-website-primary hover:bg-black px-3 py-1.5 rounded-sm text-xs transition-colors shadow-sm"
+                                >
+                                    Manage
+                                </button>
+                            </div>
+
+                            <div className="space-y-2 mb-4">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">Customer</span>
+                                    <span className="font-medium text-right">{order.customer_name}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">Amount</span>
+                                    <span className="font-bold">₹{order.total_amount?.toLocaleString()}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2 text-xs">
+                                <span className={cn(
+                                    "px-2 py-0.5 inline-flex font-semibold rounded-full border",
+                                    pStatus === 'Paid' ? "bg-green-50 text-green-700 border-green-200" :
+                                        pStatus === 'Pending' ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
+                                            "bg-red-50 text-red-700 border-red-200"
+                                )}>
+                                    {pStatus}
+                                </span>
+                                <span className={cn(
+                                    "px-2 py-0.5 inline-flex font-semibold rounded-full border",
+                                    oStatus === 'Processing' ? "bg-blue-50 text-blue-700 border-blue-200" :
+                                        oStatus === 'Shipped' ? "bg-purple-50 text-purple-700 border-purple-200" :
+                                            oStatus === 'Delivered' ? "bg-teal-50 text-teal-700 border-teal-200" :
+                                                oStatus === 'Price Mismatch' ? "bg-orange-50 text-orange-700 border-orange-200" :
+                                                    oStatus === 'Cancelled' || oStatus === 'Refunded' || oStatus === 'Rejected' ? "bg-red-50 text-red-700 border-red-200" :
+                                                        "bg-gray-100 text-gray-700 border-gray-200"
+                                )}>
+                                    {oStatus}
+                                </span>
+                            </div>
+                        </div>
+                    )
+                }) : (
+                    <div className="text-center py-10 text-gray-500 bg-white rounded-lg border border-dashed">No orders found</div>
+                )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
@@ -711,6 +804,7 @@ const Orders = () => {
 
 const AdminLayout = () => {
     const location = useLocation();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
     const navItems = [
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -720,13 +814,28 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="flex h-screen bg-gray-100">
-            {/* Sidebar */}
-            <div className="w-64 bg-website-primary text-gray-300 flex flex-col">
-                <div className="h-16 flex items-center px-6 border-b border-gray-700">
+        <div className="flex h-screen bg-gray-100 overflow-hidden">
+            {/* Mobile Header */}
+            <div className="md:hidden fixed top-0 w-full bg-website-primary text-white h-16 flex items-center justify-between px-4 z-40 shadow-md">
+                <span className="font-serif font-bold text-lg">SDS Admin</span>
+                <button onClick={() => setIsSidebarOpen(true)} className="p-2">
+                    <Menu size={24} />
+                </button>
+            </div>
+
+            {/* Sidebar (Desktop + Mobile Overlay) */}
+            <div className={`
+                fixed inset-y-0 left-0 bg-website-primary text-gray-300 w-64 z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:inset-auto md:flex md:flex-col
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                <div className="h-16 flex items-center justify-between px-6 border-b border-gray-700">
                     <h1 className="text-xl font-serif font-bold text-white">SDS Admin</h1>
+                    <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-white">
+                        <X size={24} />
+                    </button>
                 </div>
-                <nav className="flex-1 p-4 space-y-2">
+
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
@@ -734,6 +843,7 @@ const AdminLayout = () => {
                             <Link
                                 key={item.name}
                                 to={item.path}
+                                onClick={() => setIsSidebarOpen(false)}
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
                                     isActive ? "bg-website-accent text-white" : "hover:bg-gray-800 text-gray-400"
@@ -762,8 +872,16 @@ const AdminLayout = () => {
                 </div>
             </div>
 
+            {/* Backdrop for Mobile */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Content */}
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto md:h-screen pt-16 md:pt-0">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/products" element={<Products />} />
