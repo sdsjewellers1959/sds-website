@@ -36,6 +36,7 @@ const Navbar = () => {
                         <Link to="/about" className="hover:text-website-accent transition text-xs tracking-[0.15em] uppercase font-bold text-gray-800">Our Legacy</Link>
                         <Link to="/locate" className="hover:text-website-accent transition text-xs tracking-[0.15em] uppercase font-bold text-gray-800">Locate Us</Link>
                         <Link to="/contact" className="hover:text-website-accent transition text-xs tracking-[0.15em] uppercase font-bold text-gray-800">Contact</Link>
+                        <Link to="/track-order" className="hover:text-website-accent transition text-xs tracking-[0.15em] uppercase font-bold text-gray-800">Track Order</Link>
                     </div>
 
                     {/* Icons */}
@@ -75,6 +76,7 @@ const Navbar = () => {
                         <Link to="/about" className="block px-3 py-3 text-gray-900 border-b border-gray-200 w-full text-center font-medium tracking-wide" onClick={() => setIsOpen(false)}>OUR LEGACY</Link>
                         <Link to="/locate" className="block px-3 py-3 text-gray-900 border-b border-gray-200 w-full text-center font-medium tracking-wide" onClick={() => setIsOpen(false)}>LOCATE US</Link>
                         <Link to="/contact" className="block px-3 py-3 text-gray-900 w-full text-center font-medium tracking-wide" onClick={() => setIsOpen(false)}>CONTACT</Link>
+                        <Link to="/track-order" className="block px-3 py-3 text-gray-900 border-t border-gray-100 w-full text-center font-medium tracking-wide" onClick={() => setIsOpen(false)}>TRACK ORDER</Link>
 
                         <div className="flex gap-6 mt-6 pb-4">
                             <button className="text-gray-900 p-2 bg-white rounded-full shadow-sm"><Search size={20} /></button>

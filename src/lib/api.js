@@ -145,7 +145,11 @@ export const apiClient = {
 
         const { data, error } = await supabase
             .from('orders')
-            .insert([{ ...orderData, status: 'Pending Payment', razorpay_order_id }])
+            .insert([{
+                ...orderData,
+                status: 'Pending Payment', // Legacy field reused for initial state
+                razorpay_order_id
+            }])
             .select()
             .single();
 
@@ -173,6 +177,60 @@ export const apiClient = {
 
         if (error) throw error;
         return { status: 'success', order: data };
+    },
+
+    getOrder: async (orderId, phone = null) => {
+        // Helper to normalize phone numbers (last 10 digits)
+        const normalizePhone = (p) => {
+            if (!p) return '';
+            const digits = p.replace(/\D/g, '');
+            return digits.slice(-10);
+        };
+
+        const targetPhone = normalizePhone(phone);
+
+        try {
+            // 1. Fetch by ID directly (works for Integer or UUID)
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('id', orderId)
+                .single();
+
+            if (error || !data) return null;
+
+            // 2. Security Check: Verify Phone Number
+            if (phone) {
+                // Ensure customer_phone is string before regex
+                const dbPhoneRaw = String(data.customer_phone || '');
+                const dbPhone = normalizePhone(dbPhoneRaw);
+
+                // Strict Check: Mismatch fails even if DB phone is missing/invalid
+                if (dbPhone !== targetPhone) {
+                    console.warn(`Security: Phone mismatch for Order #${orderId}`);
+                    // return null means "Order Not Found" (Security through obscurity)
+                    return null;
+                }
+            }
+
+            return data;
+
+        } catch (error) {
+            console.error("Error fetching order:", error);
+            return null;
+        }
+    },
+
+    updateOrder: async (id, updates) => {
+        const { data, error } = await supabase
+            .from('orders')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
     },
 
     // Offers

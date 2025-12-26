@@ -70,8 +70,8 @@ const Checkout = () => {
 
                         if (verifyRes.status === 'success') {
                             clearCart();
-                            alert("Payment Successful! Order Placed.");
-                            navigate('/');
+                            // alert("Payment Successful! Order Placed."); // Removed alert in favor of page
+                            navigate(`/order-confirmation/${data.order.id}`);
                         } else {
                             alert("Payment Verification Failed");
                         }
@@ -124,17 +124,29 @@ const Checkout = () => {
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Contact Information</h3>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email / Mobile No.</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                                     <input
-                                        type="text"
+                                        type="email"
                                         name="email"
                                         required
                                         value={formData.email}
                                         onChange={handleChange}
                                         className="w-full border border-gray-300 px-4 py-2 rounded-sm focus:outline-none focus:border-website-primary"
-                                        placeholder="Email or Mobile"
+                                        placeholder="your@email.com"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">We'll send order updates here. No login required.</p>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        required
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        className="w-full border border-gray-300 px-4 py-2 rounded-sm focus:outline-none focus:border-website-primary"
+                                        placeholder="10-digit mobile number"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">Required for order tracking and updates.</p>
                                 </div>
                             </div>
 

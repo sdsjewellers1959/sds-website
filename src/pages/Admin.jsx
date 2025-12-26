@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, X, Truck, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ProductForm from '../components/admin/ProductForm';
 
@@ -409,71 +409,302 @@ const Products = () => {
 
 const Orders = () => {
     const [orders, setOrders] = React.useState([]);
+    const [selectedOrder, setSelectedOrder] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+
+    // Modal State
+    const [orderStatus, setOrderStatus] = React.useState('');
+    const [tracking, setTracking] = React.useState({ courier: '', tracking_number: '', url: '' });
+    const [priceMismatch, setPriceMismatch] = React.useState({ new_price: '' });
+
+    const fetchOrders = async () => {
+        try {
+            const data = await apiClient.getOrders();
+            setOrders(data);
+        } catch (error) {
+            console.error("Error fetching orders", error);
+        }
+    };
 
     React.useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const data = await apiClient.getOrders();
-                setOrders(data);
-            } catch (error) {
-                console.error("Error fetching orders", error);
-            }
-        };
         fetchOrders();
     }, []);
+
+    const openModal = (order) => {
+        setSelectedOrder(order);
+        // Fallback for legacy data
+        setOrderStatus(order.order_status || order.status || 'Placed');
+        setTracking(order.tracking_info || { courier: '', tracking_number: '', url: '' });
+        setPriceMismatch(order.price_mismatch_details || { new_price: '' });
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        if (!selectedOrder) return;
+        setLoading(true);
+
+        try {
+            const updates = { order_status: orderStatus };
+
+            // Sync legacy status field for backward compatibility/reporting
+            updates.status = orderStatus;
+
+            if (orderStatus === 'Shipped') {
+                updates.tracking_info = tracking;
+            }
+
+            if (orderStatus === 'Price Mismatch') {
+                const oldPrice = selectedOrder.total_amount;
+                const newPrice = parseFloat(priceMismatch.new_price);
+                updates.price_mismatch_details = {
+                    original_price: oldPrice,
+                    new_price: newPrice,
+                    difference: newPrice - oldPrice
+                };
+            }
+
+            await apiClient.updateOrder(selectedOrder.id, updates);
+            await fetchOrders();
+            setSelectedOrder(null);
+        } catch (error) {
+            alert('Failed to update order');
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getPaymentStatus = (order) => {
+        if (order.payment_status) return order.payment_status;
+        // Inference for legacy orders
+        if (['Paid', 'Processing', 'Shipped', 'Delivered', 'Price Mismatch'].includes(order.status)) return 'Paid';
+        if (order.status === 'Pending Payment') return 'Pending';
+        return 'Unknown';
+    };
+
+    const getOrderStatus = (order) => {
+        return order.order_status || order.status || 'Placed';
+    };
 
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Orders</h1>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {orders.length > 0 ? orders.map((order) => (
-                            <tr key={order.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{order.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(order.created_at).toLocaleDateString()}
-                                    <br />
-                                    <span className="text-xs text-gray-400">{new Date(order.created_at).toLocaleTimeString()}</span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div className="font-medium text-gray-900">{order.customer_name}</div>
-                                    <div className="text-xs">{order.customer_email}</div>
-                                    <div className="text-xs">{order.customer_phone}</div>
-                                </td>
-                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs break-words">
-                                    {order.address || "N/A"}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                    <span className={cn(
-                                        "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
-                                        order.status === 'Pending' ? "bg-yellow-100 text-yellow-800" :
-                                            order.status === 'Pending Payment' ? "bg-orange-100 text-orange-800" :
-                                                "bg-green-100 text-green-800"
-                                    )}>
-                                        {order.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">₹{order.total_amount?.toLocaleString()}</td>
-                            </tr>
-                        )) : (
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
                             <tr>
-                                <td colSpan={6} className="px-6 py-4 text-center text-gray-500">No orders yet</td>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Order Info</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Details</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {orders.length > 0 ? orders.map((order) => {
+                                const pStatus = getPaymentStatus(order);
+                                const oStatus = getOrderStatus(order);
+                                return (
+                                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <div className="font-bold text-website-primary">#{order.id}</div>
+                                            <div className="text-xs text-gray-400">{new Date(order.created_at).toLocaleDateString()}</div>
+                                            <div className="font-bold mt-2">₹{order.total_amount?.toLocaleString()}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            <div className="font-medium text-gray-900">{order.customer_name}</div>
+                                            <a href={`mailto:${order.customer_email}`} className="text-xs text-blue-600 hover:underline block">{order.customer_email}</a>
+                                            <a href={`tel:${order.customer_phone}`} className="text-xs text-gray-500 hover:text-gray-700 block">{order.customer_phone}</a>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500 max-w-xs">
+                                            <div className="line-clamp-3" title={order.address}>
+                                                {order.address || "N/A"}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span className={cn(
+                                                "px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border",
+                                                pStatus === 'Paid' ? "bg-green-50 text-green-700 border-green-200" :
+                                                    pStatus === 'Pending' ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
+                                                        "bg-red-50 text-red-700 border-red-200"
+                                            )}>
+                                                {pStatus}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span className={cn(
+                                                "px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border",
+                                                oStatus === 'Processing' ? "bg-blue-50 text-blue-700 border-blue-200" :
+                                                    oStatus === 'Shipped' ? "bg-purple-50 text-purple-700 border-purple-200" :
+                                                        oStatus === 'Delivered' ? "bg-teal-50 text-teal-700 border-teal-200" :
+                                                            oStatus === 'Price Mismatch' ? "bg-orange-50 text-orange-700 border-orange-200" :
+                                                                oStatus === 'Cancelled' || oStatus === 'Refunded' || oStatus === 'Rejected' ? "bg-red-50 text-red-700 border-red-200" :
+                                                                    "bg-gray-100 text-gray-700 border-gray-200"
+                                            )}>
+                                                {oStatus}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button
+                                                onClick={() => openModal(order)}
+                                                className="text-white bg-website-primary hover:bg-black px-3 py-1.5 rounded-sm text-xs transition-colors shadow-sm"
+                                            >
+                                                Manage
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            }) : (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">No orders found</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            {/* Management Modal */}
+            {selectedOrder && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fade-in backdrop-blur-sm">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-lg sticky top-0">
+                            <div>
+                                <h3 className="font-bold text-lg">Manage Order #{selectedOrder.id}</h3>
+                                <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
+                                    {new Date(selectedOrder.created_at).toLocaleString()}
+                                </p>
+                            </div>
+                            <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+                            {/* Read-Only Info Grid */}
+                            <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-md border border-gray-100">
+                                <div>
+                                    <span className="block text-gray-500 text-xs">Customer</span>
+                                    <span className="font-medium">{selectedOrder.customer_name}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-gray-500 text-xs">Total Amount</span>
+                                    <span className="font-medium">₹{selectedOrder.total_amount}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-gray-500 text-xs">Contact</span>
+                                    <span className="block">{selectedOrder.customer_phone}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-gray-500 text-xs">Payment Status</span>
+                                    <span className="font-medium text-gray-700 flex items-center gap-1">
+                                        {getPaymentStatus(selectedOrder) === 'Paid' ? <CheckCircle size={14} className="text-green-600" /> : <AlertTriangle size={14} className="text-yellow-600" />}
+                                        {getPaymentStatus(selectedOrder)}
+                                    </span>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className="block text-gray-500 text-xs">Address</span>
+                                    <span className="block text-gray-700">{selectedOrder.address}</span>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleUpdate} className="space-y-6">
+                                {/* Order Status Selector */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Order Status (Update)</label>
+                                    <select
+                                        className="w-full border border-gray-300 rounded-sm px-3 py-2 focus:outline-none focus:border-website-primary bg-white"
+                                        value={orderStatus}
+                                        onChange={(e) => setOrderStatus(e.target.value)}
+                                    >
+                                        <option value="Placed">Placed</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Processing">Processing</option>
+                                        <option value="Shipped">Shipped (Handed to Courier)</option>
+                                        <option value="Delivered">Delivered</option>
+                                        <option value="Price Mismatch">Price Mismatch</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Refunded">Refunded</option>
+                                    </select>
+                                </div>
+
+                                {/* Conditional Fields: Shipping */}
+                                {orderStatus === 'Shipped' && (
+                                    <div className="space-y-4 bg-gray-50 p-4 rounded-md border border-gray-100 animate-fade-in">
+                                        <h4 className="font-medium text-sm text-gray-900 flex items-center gap-2">
+                                            <Truck size={16} /> Shipping Details
+                                        </h4>
+                                        <input
+                                            type="text"
+                                            placeholder="Courier Name"
+                                            className="w-full border px-3 py-2 rounded-sm text-sm"
+                                            value={tracking.courier}
+                                            onChange={e => setTracking({ ...tracking, courier: e.target.value })}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Tracking Number"
+                                            className="w-full border px-3 py-2 rounded-sm text-sm"
+                                            value={tracking.tracking_number}
+                                            onChange={e => setTracking({ ...tracking, tracking_number: e.target.value })}
+                                        />
+                                        <input
+                                            type="url"
+                                            placeholder="Tracking Link"
+                                            className="w-full border px-3 py-2 rounded-sm text-sm"
+                                            value={tracking.url}
+                                            onChange={e => setTracking({ ...tracking, url: e.target.value })}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Conditional Fields: Price Mismatch */}
+                                {orderStatus === 'Price Mismatch' && (
+                                    <div className="space-y-4 bg-orange-50 p-4 rounded-md border border-orange-100 animate-fade-in">
+                                        <h4 className="font-medium text-sm text-orange-900 flex items-center gap-2">
+                                            <AlertTriangle size={16} /> Price Correction
+                                        </h4>
+                                        <p className="text-xs text-orange-700">Set the new correct price. The user will be asked to pay the difference.</p>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">Original Price</label>
+                                            <div className="text-sm font-bold">₹{selectedOrder.total_amount}</div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 mb-1">New Correct Price</label>
+                                            <input
+                                                type="number"
+                                                className="w-full border px-3 py-2 rounded-sm text-sm"
+                                                placeholder="Enter new amount"
+                                                value={priceMismatch.new_price}
+                                                onChange={e => setPriceMismatch({ ...priceMismatch, new_price: e.target.value })}
+                                            />
+                                        </div>
+                                        {priceMismatch.new_price && (
+                                            <div className="text-sm text-orange-800 font-medium">
+                                                Difference to Pay: ₹{parseFloat(priceMismatch.new_price) - selectedOrder.total_amount}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Submit */}
+                                <div className="pt-2">
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full bg-website-primary text-white py-3 rounded-sm hover:bg-black transition-colors disabled:opacity-50 font-medium"
+                                    >
+                                        {loading ? 'Updating Status...' : 'Save Changes'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

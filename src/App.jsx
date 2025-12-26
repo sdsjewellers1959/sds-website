@@ -14,6 +14,8 @@ import ScrollToTop from './components/ScrollToTop';
 import FAQ from './pages/FAQ';
 import Care from './pages/Care';
 import Terms from './pages/Terms';
+import TrackOrder from './pages/TrackOrder';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 // Simple placeholders for other footer links
 const Shipping = () => <div className="py-20 text-center text-2xl font-serif">Shipping & Returns Page Coming Soon</div>;
@@ -49,11 +51,13 @@ function App() {
           <Route path="/locate" element={<Locate />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/care" element={<Care />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/shipping" element={<Shipping />} />
           <Route path="/careers" element={<Careers />} />
+          <Route path="/track-order" element={<TrackOrder />} />
         </Route>
       </Routes>
     </>
