@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Package, Check, AlertTriangle, CreditCard, Truck, Users, XCircle } from 'lucide-react';
+import { Search, Package, Check, AlertTriangle, CreditCard, Truck, Users, XCircle, MessageCircle } from 'lucide-react';
 import { apiClient } from '../lib/api';
 import SEO from '../components/SEO';
 
@@ -9,6 +9,32 @@ const TrackOrder = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Modification Request State
+    const [modType, setModType] = useState(''); // 'cancel', 'address', 'phone'
+    const [modValue, setModValue] = useState('');
+
+    const handleWhatsAppRequest = () => {
+        if (!modValue.trim()) return alert("Please provide details.");
+
+        const typeLabels = {
+            'cancel': 'Request Cancellation',
+            'address': 'Update Address',
+            'phone': 'Update Phone Number'
+        };
+
+        const message = `Hello SDS Jewellers,
+I want to request a change for Order #${order.id}.
+Request Type: ${typeLabels[modType]}
+Details: ${modValue}
+
+Link: ${window.location.href}`;
+
+        const url = `https://wa.me/918302287914?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+        setModType('');
+        setModValue('');
+    };
 
     const handleTrack = async (e) => {
         e.preventDefault();
@@ -228,6 +254,90 @@ const TrackOrder = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* Order Modification Actions (Non-Shipped Orders Only) */}
+                        {['Placed', 'Pending Payment', 'Paid', 'Confirmed', 'Processing'].includes(order._order_status) && (
+                            <div className="border-t border-gray-100 p-6 bg-blue-50">
+                                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <MessageCircle size={20} className="text-website-primary" />
+                                    Need Help with your Order?
+                                </h3>
+
+                                {!modType ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <button
+                                            onClick={() => setModType('cancel')}
+                                            className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm"
+                                        >
+                                            Request Cancellation
+                                        </button>
+                                        <button
+                                            onClick={() => setModType('address')}
+                                            className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm"
+                                        >
+                                            Update Address
+                                        </button>
+                                        <button
+                                            onClick={() => setModType('phone')}
+                                            className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm"
+                                        >
+                                            Update Phone Number
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="bg-white p-4 rounded-lg shadow-sm animate-fade-in border border-blue-100">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <h4 className="font-semibold text-sm">
+                                                {modType === 'cancel' && 'Request Order Cancellation'}
+                                                {modType === 'address' && 'Update Delivery Address'}
+                                                {modType === 'phone' && 'Update Contact Number'}
+                                            </h4>
+                                            <button onClick={() => { setModType(''); setModValue(''); }} className="text-gray-400 hover:text-gray-600">
+                                                <XCircle size={18} />
+                                            </button>
+                                        </div>
+
+                                        <div className="mb-3">
+                                            {modType === 'cancel' && (
+                                                <textarea
+                                                    className="w-full border border-gray-300 rounded-sm p-3 text-sm focus:outline-none focus:border-website-primary"
+                                                    rows="3"
+                                                    placeholder="Please tell us why you want to cancel (Optional but helpful)..."
+                                                    value={modValue}
+                                                    onChange={(e) => setModValue(e.target.value)}
+                                                />
+                                            )}
+                                            {modType === 'address' && (
+                                                <textarea
+                                                    className="w-full border border-gray-300 rounded-sm p-3 text-sm focus:outline-none focus:border-website-primary"
+                                                    rows="3"
+                                                    placeholder="Enter your new complete address with Pincode..."
+                                                    value={modValue}
+                                                    onChange={(e) => setModValue(e.target.value)}
+                                                />
+                                            )}
+                                            {modType === 'phone' && (
+                                                <input
+                                                    type="text"
+                                                    className="w-full border border-gray-300 rounded-sm p-3 text-sm focus:outline-none focus:border-website-primary"
+                                                    placeholder="Enter new phone number..."
+                                                    value={modValue}
+                                                    onChange={(e) => setModValue(e.target.value)}
+                                                />
+                                            )}
+                                        </div>
+
+                                        <button
+                                            onClick={handleWhatsAppRequest}
+                                            className="w-full bg-[#25D366] text-white py-2 rounded-sm font-medium hover:bg-[#128C7E] transition-colors flex justify-center items-center gap-2"
+                                        >
+                                            <MessageCircle size={18} />
+                                            Send Request via WhatsApp
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* Order Items Preview (Optional but nice) */}
                         <div className="border-t border-gray-100 p-6">
