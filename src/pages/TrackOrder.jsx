@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Package, Check, AlertTriangle, CreditCard, Truck, Users, XCircle, MessageCircle } from 'lucide-react';
 import { apiClient } from '../lib/api';
+import { formatOrderId } from '../lib/utils';
 import SEO from '../components/SEO';
 
 const TrackOrder = () => {
@@ -24,7 +25,7 @@ const TrackOrder = () => {
         };
 
         const message = `Hello SDS Jewellers,
-I want to request a change for Order #${order.id}.
+I want to request a change for Order #${formatOrderId(order.id)}.
 Request Type: ${typeLabels[modType]}
 Details: ${modValue}
 
@@ -152,7 +153,7 @@ Link: ${window.location.href}`;
                         <div className="bg-gray-50 border-b border-gray-100 p-6 flex justify-between items-center flex-wrap gap-4">
                             <div>
                                 <p className="text-sm text-gray-500">Order ID</p>
-                                <p className="font-bold text-lg">#{order.id}</p>
+                                <p className="font-bold text-lg">#{formatOrderId(order.id)}</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-500">Total Amount</p>

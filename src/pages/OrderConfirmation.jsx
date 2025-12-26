@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { formatOrderId } from '../lib/utils';
 import { CheckCircle, Package, MapPin, Phone, Mail } from 'lucide-react';
 import { apiClient } from '../lib/api';
 import SEO from '../components/SEO';
@@ -67,7 +68,7 @@ const OrderConfirmation = () => {
                         </div>
                         <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">Order Confirmed!</h1>
                         <p className="text-gray-600">Thank you for your purchase. Your order has been placed successfully.</p>
-                        <p className="text-sm text-gray-500 mt-2">Order ID: <span className="font-mono font-bold text-gray-900">#{order.id}</span></p>
+                        <p className="text-sm text-gray-500 mt-2">Order ID: <span className="font-mono font-bold text-gray-900">#{formatOrderId(order.id)}</span></p>
                     </div>
 
                     {/* Order Details Grid */}

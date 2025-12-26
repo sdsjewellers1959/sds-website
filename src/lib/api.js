@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { formatOrderId } from './utils';
 
 export const apiClient = {
     // Products
@@ -180,7 +181,7 @@ export const apiClient = {
                 body: JSON.stringify({
                     amount: orderData.total_amount * 100, // Amount in paise
                     currency: "INR",
-                    receipt: `order_rcptid_${sbOrder.id}`
+                    receipt: `order_rcptid_${formatOrderId(sbOrder.id)}`
                 })
             });
 

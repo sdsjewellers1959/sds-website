@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, X, Truck, AlertTriangle, CheckCircle, XCircle, Menu } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn, formatOrderId } from '../lib/utils';
 import ProductForm from '../components/admin/ProductForm';
 
 import { apiClient } from '../lib/api';
@@ -544,7 +544,7 @@ const Orders = () => {
                         <div key={order.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
                             <div className="flex justify-between items-start mb-3">
                                 <div>
-                                    <div className="font-bold text-lg text-website-primary">#{order.id}</div>
+                                    <div className="font-bold text-lg text-website-primary">#{formatOrderId(order.id)}</div>
                                     <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleString()}</div>
                                 </div>
                                 <button
@@ -617,7 +617,7 @@ const Orders = () => {
                                 return (
                                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div className="font-bold text-website-primary">#{order.id}</div>
+                                            <div className="font-bold text-website-primary">#{formatOrderId(order.id)}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <div className="text-xs">{new Date(order.created_at).toLocaleString()}</div>
@@ -684,7 +684,7 @@ const Orders = () => {
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-lg sticky top-0">
                             <div>
-                                <h3 className="font-bold text-lg">Manage Order #{selectedOrder.id}</h3>
+                                <h3 className="font-bold text-lg">Manage Order #{formatOrderId(selectedOrder.id)}</h3>
                                 <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
                                     {new Date(selectedOrder.created_at).toLocaleString()}
                                 </p>
