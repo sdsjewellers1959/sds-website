@@ -140,26 +140,61 @@ export const apiClient = {
     },
 
     createOrder: async (orderData) => {
-        // Generate a mock Razorpay Order ID (Since we don't have a backend to do it properly)
-        const razorpay_order_id = `order_${Math.random().toString(36).substring(7)}`;
-
-        const { data, error } = await supabase
+        // 1. Create Order in Supabase with 'Pending Payment'
+        const { data: sbOrder, error: sbError } = await supabase
             .from('orders')
             .insert([{
                 ...orderData,
-                status: 'Pending Payment', // Legacy field reused for initial state
-                razorpay_order_id
+                status: 'Pending Payment'
             }])
             .select()
             .single();
 
-        if (error) throw error;
+        if (sbError) throw sbError;
 
-        return {
-            order: data,
-            razorpay_order_id: razorpay_order_id,
-            key_id: import.meta.env.VITE_RAZORPAY_KEY_ID
-        };
+        try {
+            // 2. Call Netlify Function to create real Razorpay Order
+            // Note: In development (localhost), you'll need 'netlify dev' or a proxy to hit this.
+            // For now, we assume deployed environment or configured proxy.
+            const response = await fetch('/.netlify/functions/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: orderData.total_amount * 100, // Amount in paise
+                    currency: "INR",
+                    receipt: `order_rcptid_${sbOrder.id}`
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to create Razorpay order');
+            }
+
+            const rzpOrder = await response.json();
+
+            // 3. Update Supabase with real Razorpay Order ID
+            const { data: updatedOrder, error: updateError } = await supabase
+                .from('orders')
+                .update({ razorpay_order_id: rzpOrder.id })
+                .eq('id', sbOrder.id)
+                .select()
+                .single();
+
+            if (updateError) throw updateError;
+
+            return {
+                order: updatedOrder,
+                razorpay_order_id: rzpOrder.id,
+                key_id: import.meta.env.VITE_RAZORPAY_KEY_ID
+            };
+
+        } catch (err) {
+            console.error("Backend Order Creation Failed:", err);
+            // If backend fails, we should probably delete the pending Supabase order or mark it failed
+            // For now, re-throwing to let UI handle it
+            throw err;
+        }
     },
 
     verifyPayment: async (paymentData) => {
