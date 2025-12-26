@@ -463,17 +463,27 @@ const Orders = () => {
         fetchOrders();
     }, []);
 
+    const [confirmPassword, setConfirmPassword] = React.useState('');
+
     const openModal = (order) => {
         setSelectedOrder(order);
         // Fallback for legacy data
         setOrderStatus(order.order_status || order.status || 'Placed');
         setTracking(order.tracking_info || { courier: '', tracking_number: '', url: '' });
         setPriceMismatch(order.price_mismatch_details || { new_price: '' });
+        setConfirmPassword(''); // Reset password field
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         if (!selectedOrder) return;
+
+        // Security Check
+        if (confirmPassword !== 'warriorwhocodes') {
+            alert('Invalid Admin Password. Modification Access Denied.');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -782,6 +792,19 @@ const Orders = () => {
                                         )}
                                     </div>
                                 )}
+
+                                {/* Security: Password Confirmation */}
+                                <div className="pt-2 border-t border-gray-100 mt-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Admin Password (Required)</label>
+                                    <input
+                                        type="password"
+                                        placeholder="Enter password to confirm"
+                                        className="w-full border border-gray-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-website-primary"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
 
                                 {/* Submit */}
                                 <div className="pt-2">
