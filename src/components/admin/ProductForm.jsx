@@ -172,8 +172,54 @@ const ProductForm = ({ product, onClose, onSave }) => {
                             <p className="text-[10px] text-gray-500 mt-1">Automatically calculated based on settings.</p>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                            <input type="text" className="w-full border p-2 rounded-sm" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} />
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                            <div className="space-y-2">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+
+                                        // Simple validation
+                                        if (file.size > 5 * 1024 * 1024) {
+                                            alert("File too large. Max 5MB.");
+                                            return;
+                                        }
+
+                                        setLoading(true);
+                                        try {
+                                            const url = await apiClient.uploadImage(file);
+                                            setFormData(prev => ({ ...prev, image: url }));
+                                        } catch (err) {
+                                            console.error("Upload failed", err);
+                                            alert("Failed to upload image. Ensure 'product-images' bucket exists and is public.");
+                                        } finally {
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    className="w-full border p-2 rounded-sm text-sm"
+                                />
+                                {formData.image && (
+                                    <div className="relative group w-20 h-20">
+                                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover rounded-sm border border-gray-200" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                )}
+                                <input
+                                    type="text"
+                                    placeholder="Or enter URL manually"
+                                    className="w-full border p-2 rounded-sm text-xs text-gray-500"
+                                    value={formData.image}
+                                    onChange={e => setFormData({ ...formData, image: e.target.value })}
+                                />
+                            </div>
                         </div>
                     </div>
 

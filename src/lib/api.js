@@ -62,6 +62,21 @@ export const apiClient = {
         return { message: 'Product deleted' };
     },
 
+    uploadImage: async (file) => {
+        const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '-')}`;
+        const { data, error } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, file);
+
+        if (error) throw error;
+
+        const { data: publicUrlData } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName);
+
+        return publicUrlData.publicUrl;
+    },
+
     // Categories
     getCategories: async () => {
         const { data, error } = await supabase
