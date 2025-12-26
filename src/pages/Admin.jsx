@@ -542,7 +542,7 @@ const Orders = () => {
                             <div className="flex justify-between items-start mb-3">
                                 <div>
                                     <div className="font-bold text-lg text-website-primary">#{order.id}</div>
-                                    <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</div>
+                                    <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleString()}</div>
                                 </div>
                                 <button
                                     onClick={() => openModal(order)}
@@ -613,7 +613,7 @@ const Orders = () => {
                                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             <div className="font-bold text-website-primary">#{order.id}</div>
-                                            <div className="text-xs text-gray-400">{new Date(order.created_at).toLocaleDateString()}</div>
+                                            <div className="text-xs text-gray-400">{new Date(order.created_at).toLocaleString()}</div>
                                             <div className="font-bold mt-2">₹{order.total_amount?.toLocaleString()}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
@@ -710,6 +710,51 @@ const Orders = () => {
                                 <div className="col-span-2">
                                     <span className="block text-gray-500 text-xs">Address</span>
                                     <span className="block text-gray-700">{selectedOrder.address}</span>
+                                </div>
+                            </div>
+
+                            {/* Order Items & Breakup */}
+                            <div className="bg-white border border-gray-100 rounded-md overflow-hidden">
+                                <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 font-medium text-sm text-gray-700">
+                                    Order Items
+                                </div>
+                                <div className="p-4">
+                                    {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {selectedOrder.items.map((item, idx) => (
+                                                <div key={idx} className="flex items-center gap-4 text-sm">
+                                                    <div className="h-12 w-12 flex-shrink-0 border border-gray-200 rounded-sm overflow-hidden bg-gray-50">
+                                                        {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-medium text-gray-900 truncate">{item.name}</p>
+                                                        <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="font-medium">₹{(item.price * item.quantity).toLocaleString()}</p>
+                                                        <p className="text-xs text-gray-400">₹{item.price} ea</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
+                                                <div className="flex justify-between text-sm text-gray-600">
+                                                    <span>Subtotal</span>
+                                                    <span>₹{selectedOrder.total_amount?.toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex justify-between text-sm text-gray-600">
+                                                    <span>Shipping</span>
+                                                    <span className="text-green-600">Free</span>
+                                                </div>
+                                                <div className="flex justify-between text-base font-bold text-gray-900 border-t border-gray-100 pt-2 mt-2">
+                                                    <span>Total</span>
+                                                    <span>₹{selectedOrder.total_amount?.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-gray-500 text-sm py-4">No item details available</div>
+                                    )}
                                 </div>
                             </div>
 
