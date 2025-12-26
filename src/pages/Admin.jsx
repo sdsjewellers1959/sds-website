@@ -519,9 +519,12 @@ const Orders = () => {
 
     const getPaymentStatus = (order) => {
         if (order.payment_status) return order.payment_status;
+
+        const currentStatus = order.order_status || order.status;
+
         // Inference for legacy orders
-        if (['Paid', 'Processing', 'Shipped', 'Delivered', 'Price Mismatch'].includes(order.status)) return 'Paid';
-        if (order.status === 'Pending Payment') return 'Pending';
+        if (['Paid', 'Processing', 'Shipped', 'Delivered', 'Price Mismatch', 'Confirmed', 'Placed'].includes(currentStatus)) return 'Paid';
+        if (currentStatus === 'Pending Payment' || currentStatus === 'Pending') return 'Pending';
         return 'Unknown';
     };
 
@@ -773,15 +776,24 @@ const Orders = () => {
                                         value={orderStatus}
                                         onChange={(e) => setOrderStatus(e.target.value)}
                                     >
-                                        <option value="Placed">Placed</option>
-                                        <option value="Confirmed">Confirmed</option>
-                                        <option value="Processing">Processing</option>
-                                        <option value="Shipped">Shipped (Handed to Courier)</option>
-                                        <option value="Delivered">Delivered</option>
-                                        <option value="Price Mismatch">Price Mismatch</option>
-                                        <option value="Cancelled">Cancelled</option>
-                                        <option value="Rejected">Rejected</option>
-                                        <option value="Refunded">Refunded</option>
+                                        {getPaymentStatus(selectedOrder) === 'Paid' ? (
+                                            <>
+                                                <option value="Placed">Placed</option>
+                                                <option value="Confirmed">Confirmed</option>
+                                                <option value="Processing">Processing</option>
+                                                <option value="Shipped">Shipped (Handed to Courier)</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Price Mismatch">Price Mismatch</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Rejected">Rejected</option>
+                                                <option value="Refunded">Refunded</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option value="Pending Payment">Waiting</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </>
+                                        )}
                                     </select>
                                 </div>
 
