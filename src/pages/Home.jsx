@@ -99,6 +99,11 @@ const Home = () => {
                                         Explore <ArrowRight size={12} />
                                     </span>
                                 </div>
+                                <Link
+                                    to={`/category?category=${cat.name}`}
+                                    className="absolute inset-0 z-20"
+                                    aria-label={`View ${cat.name} collection`}
+                                />
                             </motion.div>
                         ))}
                     </div>

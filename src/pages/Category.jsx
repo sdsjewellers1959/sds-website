@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import ProductGrid from '../components/ProductGrid';
 import { categories } from '../lib/mockData';
 import { apiClient } from '../lib/api';
+import { useSearchParams } from 'react-router-dom';
 import { Filter } from 'lucide-react';
 import { cn } from '../lib/utils';
 import SEO from '../components/SEO';
 
 const Category = () => {
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [searchParams] = useSearchParams();
+    const initialCategory = searchParams.get('category') || "All";
+    const [selectedCategory, setSelectedCategory] = useState(initialCategory);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
