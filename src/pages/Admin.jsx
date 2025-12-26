@@ -430,8 +430,9 @@ const Orders = () => {
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                         </tr>
@@ -441,23 +442,33 @@ const Orders = () => {
                             <tr key={order.id}>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{order.id}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {order.customer_name} <br />
-                                    <span className="text-xs text-gray-400">{order.customer_email}</span>
+                                    {new Date(order.created_at).toLocaleDateString()}
+                                    <br />
+                                    <span className="text-xs text-gray-400">{new Date(order.created_at).toLocaleTimeString()}</span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(order.created_at).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div className="font-medium text-gray-900">{order.customer_name}</div>
+                                    <div className="text-xs">{order.customer_email}</div>
+                                    <div className="text-xs">{order.customer_phone}</div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs break-words">
+                                    {order.address || "N/A"}
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                     <span className={cn(
                                         "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
-                                        order.status === 'Pending' ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"
+                                        order.status === 'Pending' ? "bg-yellow-100 text-yellow-800" :
+                                            order.status === 'Pending Payment' ? "bg-orange-100 text-orange-800" :
+                                                "bg-green-100 text-green-800"
                                     )}>
                                         {order.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">₹{order.total_amount}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">₹{order.total_amount?.toLocaleString()}</td>
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">No orders yet</td>
+                                <td colSpan={6} className="px-6 py-4 text-center text-gray-500">No orders yet</td>
                             </tr>
                         )}
                     </tbody>

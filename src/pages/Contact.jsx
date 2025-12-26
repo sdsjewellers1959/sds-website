@@ -12,17 +12,11 @@ const Contact = () => {
     });
     const [settings, setSettings] = useState(null);
 
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const data = await apiClient.getSettings();
-                setSettings(data);
-            } catch (err) {
-                console.error("Error fetching settings", err);
-            }
-        };
-        fetchSettings();
-    }, []);
+    // We use static contact info to prevent flickering from demo backend data
+    const contactInfo = {
+        email: 'sdsjewellers1959@gmail.com',
+        phone: '+91 83022 87914'
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,7 +24,7 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const phone = settings?.contact_phone?.replace(/\s+/g, '') || '+919876543210';
+        const phone = contactInfo.phone.replace(/\s+/g, '');
         const text = `Hello SDS Jewellers,\n\nI have a query from your website.\n\n*Name:* ${formData.firstName} ${formData.lastName}\n*Email:* ${formData.email}\n*Message:* ${formData.message}`;
         const encodedText = encodeURIComponent(text);
         window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
@@ -79,7 +73,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">Call Us</h3>
-                                    <p className="text-gray-600">{settings?.contact_phone || '+91 83022 87914'}</p>
+                                    <p className="text-gray-600">{contactInfo.phone}</p>
                                     <p className="text-sm text-gray-500">Mon-Sat, 10am - 8pm</p>
                                 </div>
                             </div>
@@ -90,7 +84,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">Email Us</h3>
-                                    <p className="text-gray-600">{settings?.contact_email || 'sdsjewellers1959@gmail.com'}</p>
+                                    <p className="text-gray-600">{contactInfo.email}</p>
                                 </div>
                             </div>
                         </div>

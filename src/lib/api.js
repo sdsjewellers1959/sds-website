@@ -140,20 +140,21 @@ export const apiClient = {
     },
 
     createOrder: async (orderData) => {
-        // This will be expanded for Razorpay
+        // Generate a mock Razorpay Order ID (Since we don't have a backend to do it properly)
+        const razorpay_order_id = `order_${Math.random().toString(36).substring(7)}`;
+
         const { data, error } = await supabase
             .from('orders')
-            .insert([{ ...orderData, status: 'Pending Payment' }])
+            .insert([{ ...orderData, status: 'Pending Payment', razorpay_order_id }])
             .select()
             .single();
 
         if (error) throw error;
 
-        // Simulate Razorpay order creation (This would normally be a backend call)
         return {
             order: data,
-            razorpay_order_id: `rzp_live_${Math.random().toString(36).substring(7)}`,
-            key_id: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_placeholder"
+            razorpay_order_id: razorpay_order_id,
+            key_id: import.meta.env.VITE_RAZORPAY_KEY_ID
         };
     },
 

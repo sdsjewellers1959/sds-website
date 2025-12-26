@@ -57,12 +57,12 @@ const Checkout = () => {
                 currency: "INR",
                 name: "SDS Jewellers",
                 description: "Purchase from SDS Jewellers",
-                order_id: data.razorpay_order_id,
+                // order_id: data.razorpay_order_id, // REMOVED: Cannot pass fake order_id with Live Key. 
                 handler: async function (response) {
                     // 3. Verify Payment
                     try {
                         const verifyData = {
-                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_order_id: data.razorpay_order_id, // Use internal ID as Razorpay won't return one
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature
                         };
@@ -98,11 +98,18 @@ const Checkout = () => {
 
         } catch (error) {
             console.error("Checkout failed", error);
-            alert("Failed to initiate checkout. Please try again.");
+            // Show specific error to user for debugging
+            alert(`Checkout Error: ${error.message || error}. Please report this to support.`);
         } finally {
             setLoading(false);
         }
     };
+
+    // Ensure Razorpay is loaded
+    if (!window.Razorpay) {
+        // Retry loading logic could go here, or just warn
+        console.warn("Razorpay SDK not loaded");
+    }
 
     return (
         <div className="bg-gray-50 min-h-screen py-12">

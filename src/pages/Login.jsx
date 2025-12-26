@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -10,7 +11,7 @@ const Login = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         // Hardcoded credentials as requested by user
-        if (email === 'sdsjewellers1959@gmail.com' && password === 'warriorwhocodes') {
+        if (email.trim() === 'sdsjewellers1959@gmail.com' && password.trim() === 'warriorwhocodes') {
             localStorage.setItem('adminAuthenticated', 'true');
             navigate('/admin');
         } else {
