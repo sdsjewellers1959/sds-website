@@ -129,7 +129,10 @@ export const apiClient = {
                 contact_phone: "+91 83022 87914"
             };
         }
-        return data;
+        return {
+            ...data,
+            contact_phone: "+91 83022 87914"
+        };
     },
 
     updateSettings: async (settingsData) => {
